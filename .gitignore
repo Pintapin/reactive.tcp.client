@@ -1,0 +1,6 @@
+pintapin.tcp.client.ipr
+*.iws
+*.iml
+project/project
+project/target
+target
