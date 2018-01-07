@@ -1,6 +1,8 @@
-pintapin.tcp.client.ipr
+*.ipr
 *.iws
 *.iml
 project/project
 project/target
 target
+.idea
+.DS_Store

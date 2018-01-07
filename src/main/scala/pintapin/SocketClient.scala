@@ -1,4 +1,4 @@
-package pintapin.actors
+package pintapin
 
 object SocketClient extends App {
 

@@ -1,21 +1,28 @@
 package pintapin.actors
 
-import akka.actor.{Actor, ActorRef, Props}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.event.Logging
-import akka.io.{ IO, Tcp }
+import akka.io.{IO, Tcp, TcpMessage}
 import akka.util.ByteString
 import java.net.InetSocketAddress
 
+import akka.io.Tcp.{CommandFailed, Connected, ConnectionClosed, Received}
+import com.typesafe.config.Config
+
+import scala.concurrent.ExecutionContext
+
 object SocketClientActor {
 
-  case class CloseConnection(String reason = "")
-  def props() = ???
+  case class CloseConnection(reason: String = "")
+  def props()(implicit ec: ExecutionContext, system: ActorSystem, config: Config) = {
+    Props(new SocketClientActor(null, null))
+  }
 }
 
 class SocketClientActor(remote: InetSocketAddress, tcpActor: ActorRef) extends Actor {
   val log = Logging(context.system, this)
 
-  val manager = if (tcpActor == null) Tcp.get(getContext().system()).manager() else tcpActor
+  val manager = if (tcpActor == null) Tcp.get(context.system).manager else tcpActor
 
   manager.tell(TcpMessage.connect(remote), self)
 
@@ -32,7 +39,7 @@ class SocketClientActor(remote: InetSocketAddress, tcpActor: ActorRef) extends A
     case _ => unhandled()
   }
 
-  def connected(self: ActorRef) = {
+  def connected(self: ActorRef): Receive = {
     case msg: ByteString => {}
     case failed: CommandFailed => {}
     case msg: Received => {}
