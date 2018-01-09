@@ -11,17 +11,20 @@ import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext
 
+// Builds the actor
 object SocketClientActor {
 
   case class CloseConnection(reason: String = "")
   def props()(implicit ec: ExecutionContext, system: ActorSystem, config: Config) = {
-    Props(new SocketClientActor(null, null))
+    Props(new SocketClientActor(null, null)) //TODO
   }
 }
 
+// Actor to send and receive via tcp socket
 class SocketClientActor(remote: InetSocketAddress, tcpActor: ActorRef) extends Actor {
   val log = Logging(context.system, this)
 
+  //FIXME change to Option[ActorRef]
   val manager = if (tcpActor == null) Tcp.get(context.system).manager else tcpActor
 
   manager.tell(TcpMessage.connect(remote), self)
@@ -39,6 +42,9 @@ class SocketClientActor(remote: InetSocketAddress, tcpActor: ActorRef) extends A
     case _ => unhandled()
   }
 
+  /* Handles received messages when actor is connected
+   *
+   */
   def connected(self: ActorRef): Receive = {
     case msg: ByteString => {}
     case failed: CommandFailed => {}
