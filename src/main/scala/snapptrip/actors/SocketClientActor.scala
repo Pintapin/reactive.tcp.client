@@ -1,4 +1,4 @@
-package pintapin.actors
+package snapptrip.actors
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.event.Logging
@@ -36,7 +36,7 @@ class SocketClientActor(remote: InetSocketAddress, tcpActor: ActorRef) extends A
       sender ! TcpMessage.register(self)
       context.become(connected(self))
     }
-    case _ => unhandled()
+    case _ => unhandled("Unhandled message")
   }
 
   def connected(self: ActorRef): Receive = {
