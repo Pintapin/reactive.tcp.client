@@ -1,3 +1,3 @@
 # Reactive TCP Client
 
-This project demonstrate how we can connect to and manage a TCP socket using Akka actor model.
+This project demonstrates how we can connect to and manage a TCP socket using akka-actor and akka-stream.
