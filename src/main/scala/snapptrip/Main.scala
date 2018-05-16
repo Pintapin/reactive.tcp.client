@@ -6,6 +6,8 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl._
 import akka.util.ByteString
+import com.typesafe.config.ConfigFactory
+import snapptrip.actors.SocketClientActor
 
 import scala.concurrent.duration._
 
@@ -14,7 +16,9 @@ object Main extends App {
   val port = 2333
   val host = "0.0.0.0"
 
+  implicit val config = ConfigFactory.defaultApplication()
   implicit val system = ActorSystem()
+  implicit val ec = system.dispatcher
   implicit val mater = ActorMaterializer()
 
   createTestServer()
@@ -25,6 +29,10 @@ object Main extends App {
     .via(Tcp().outgoingConnection(host, port))
     .to(Sink.foreach(bs => println(bs.utf8String)))
     .run()
+
+
+  // Actor to read TCP data with akka
+  val clientActor = system.actorOf(SocketClientActor.props())
 
   /**
     * Create a test server that sends time, every second
